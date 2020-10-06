@@ -1,4 +1,4 @@
-#AI Car
+# AI Car
 A simple car game using a neural network to control the cars. 
 Every time all the cars die, the best one is turned into the predecessor for which the new population is made.
 Every car in the new population is a mutated copy of the predecessor.
