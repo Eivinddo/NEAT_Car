@@ -323,8 +323,8 @@ void Car::calculateRays()
 			{
 				//track->leftWalls[i]->setColor(FL_GREEN);
 				std::pair<int, int> collPoint = lineLineIntersection(p1, q1, p2L, q2L);
-				fl_color(FL_RED);
-				fl_circle(collPoint.first, collPoint.second, 5);
+				/*fl_color(FL_RED);
+				fl_circle(collPoint.first, collPoint.second, 5);*/
 
 				double distSquared = pow(phys.x - collPoint.first, 2) + pow(phys.y - collPoint.second, 2);
 				rayDistances[i] = distSquared;
@@ -335,8 +335,8 @@ void Car::calculateRays()
 			{
 				//track->rightWalls[i]->setColor(FL_GREEN);
 				std::pair<int, int> collPoint = lineLineIntersection(p1, q1, p2R, q2R);
-				fl_color(FL_RED);
-				fl_circle(collPoint.first, collPoint.second, 5);
+				/*fl_color(FL_RED);
+				fl_circle(collPoint.first, collPoint.second, 5);*/
 
 				double distSquared = pow(phys.x - collPoint.first, 2) + pow(phys.y - collPoint.second, 2);
 				rayDistances[i] = distSquared;
