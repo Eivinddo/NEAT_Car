@@ -159,7 +159,7 @@ void Car::backward()
 
 void Car::drawCar()
 {
-	double lineWidth = 2;
+	/*double lineWidth = 2;
     fl_push_matrix();
 	// Translate to center of car and rotate
     fl_translate(phys.x, phys.y);
@@ -180,10 +180,10 @@ void Car::drawCar()
     fl_vertex(( (phys.carWidth - lineWidth) / 2.0), ( (phys.carWidth - lineWidth) / 2.0));
     fl_vertex((-(phys.carWidth - lineWidth) / 2.0), ( (phys.carWidth - lineWidth) / 2.0));
 	fl_end_polygon();
-    fl_pop_matrix();
+    fl_pop_matrix();*/
 
 
-    /*
+
     fl_push_matrix();					// Begin matrix
 	fl_translate(phys.x, phys.y);		// Translate to car position
 	fl_rotate(phys.angle);				// Rotate to cars current angle
@@ -257,7 +257,7 @@ void Car::drawCar()
 	fl_end_polygon();
 
 	// Exhaust
-	for (int i = 0; i < 15; i++) {
+	/*for (int i = 0; i < 6; i++) {
 		int lim = abs(static_cast<int>(phys.vel * 15)) + 1;		// Max length of trailing exhaus
 		int x = rand() % lim + phys.carWidth;					// Random placement behind car
 		int y = rand() % 10 - 5;								// Random placement behind car
@@ -265,10 +265,9 @@ void Car::drawCar()
 		fl_begin_complex_polygon();
 		fl_arc(-x, y, x/10.0, 0, 360);							// Cirle for smoke
 		fl_end_complex_polygon();
-	}
+	}*/
 
 	fl_pop_matrix();	// End matrix
-    */
 }
 
 
@@ -280,11 +279,11 @@ void Car::drawRays()
 		rays[i].second = phys.y - rayLength * sin((90 - phys.angle + i * 45) * DEGTORAD);
 	}
 
-	fl_color(50, 50, 50);	// Grey
+	/*fl_color(50, 50, 50);	// Grey
 	for (int i = 0; i < rays.size(); i++)
 	{
 		fl_line(phys.x, phys.y, rays[i].first, rays[i].second);
-	}
+	}*/
 }
 
 
