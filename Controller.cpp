@@ -71,6 +71,7 @@ void Controller::checkCars()
 
 	if (lastDead)
 	{
+		cars[0]->getBrain().saveToFile();
 		restart();
 	}
 }

@@ -21,6 +21,8 @@ public:
     void propagate();
     //friend double mutateNumber(double num);
     void mutate();
+    void saveToFile();
+    void loadFromFile();
     std::vector<Eigen::VectorXd> getActivations() { return activations; }
     std::vector<Eigen::MatrixXd> getWeights() { return weights; }
     std::vector<Eigen::VectorXd> getBiases() { return biases; }
