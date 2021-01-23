@@ -145,6 +145,22 @@ double max(double val1, double val2)
 }
 
 
+void findMax(std::vector<double> vec, double& max, int& maxIndex)
+{
+    max = vec[0];   // Initialize maximum as vec[0]
+    maxIndex = 0;   // Initialize index for maximum
+
+    for (int i = 0; i < vec.size(); i++)
+    {
+        if (vec[i] > max)
+        {
+            max = vec[i];
+            maxIndex = i;
+        }
+    }
+}
+
+
 double sigmoid(double x)
 {
     return 1.0 / (1 + exp(-x));

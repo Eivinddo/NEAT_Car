@@ -2,7 +2,7 @@
 #include <vector>
 #include <Eigen/Dense>
 
-constexpr double mutationRate = 0.3;
+constexpr double mutationRate = 0.4;
 
 class NeuralNetwork
 {
@@ -20,6 +20,7 @@ public:
     void addInput(Eigen::VectorXd inputs) { activations[0] = inputs; }
     void propagate();
     //friend double mutateNumber(double num);
+    NeuralNetwork combine(NeuralNetwork& other, double weight);
     void mutate();
     void saveToFile();
     void loadFromFile();

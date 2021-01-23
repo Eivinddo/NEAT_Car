@@ -86,6 +86,23 @@ void NeuralNetwork::mutate()
 }
 
 
+// Returns a copy of a Neural Network consists of (this*weight) and (other*(1-weight))
+NeuralNetwork NeuralNetwork::combine(NeuralNetwork& other, double weight)
+{
+    // Assuming that the dimensions of the two neural networks are the same
+    NeuralNetwork combined = *this; // Make a copy
+    for (int i = 0; i < weights.size(); i++)
+    {
+        combined.weights[i] = this->weights[i] * weight + other.weights[i] * (1-weight);
+    }
+    for (int i = 0; i < biases.size(); i++)
+    {
+        combined.biases[i] = this->biases[i] * weight + other.biases[i] * (1-weight);
+    }
+    return combined;
+}
+
+
 void NeuralNetwork::saveToFile()
 {
     // Open/create file

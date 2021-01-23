@@ -5,7 +5,7 @@
 
 
 Car::Car(Track* track, double x, double y, double vel, double angle, bool manualControl) : 
-	Fl_Widget{ 0, 0, winW, winH }, track{track}, phys{ x,  y, vel, angle, 13, 13}, 
+	Fl_Widget{ 0, 0, winW, winH }, track{track}, phys{ x,  y, vel, angle, 0, 13, 13}, 
     brain{2, {6, 2}}, manualControl{manualControl}
 {
 	rayDistances = { 0, 0, 0, 0, 0 };
@@ -36,23 +36,40 @@ Car::Car(Track* track, double x, double y, double vel, double angle, bool manual
 	brain.randomizeBiases();
     brain.randomizeWeights();
     setBrainInput();
+
+	physAtStart = phys;	// Copy initialized placement, angle etc to use when restarting
 }
 
 
 Car::~Car()
 {
-    std::cout << "Car eliminated!" << std::endl;
+    std::cout << "Car eliminated! " << phys.distance << std::endl;
+}
+
+
+void Car::restart()
+{
+	phys = physAtStart;
+	isAlive = true;
+	isFinished = false;
+	leading = false;
+	fitnessScore = 0;
+	show();
 }
 
 
 void Car::draw()
 {
-	// Draw rays
-	drawRays();
 	// Calculate all the distances for the rays
 	calculateRays();
 	// Draw the car
     drawCar();
+	if (leading)
+	{
+		drawRays();
+		drawBrain();
+	}
+	
 	
 
 	// Choice of steering algorithm
@@ -70,6 +87,24 @@ void Car::draw()
 
 	phys.x += phys.vel * cos(phys.angle * DEGTORAD);
 	phys.y -= phys.vel * sin(phys.angle * DEGTORAD);
+	phys.distance += phys.vel * 0.016667;				// Integrate the velocity (0,0167s = 1/60Hz)
+}
+
+
+bool Car::atFinishLine()
+{
+	// Get the position and dimensions of finish line
+	int x, y, w, h;
+	track->finishLine(x, y, w, h);
+
+	if (phys.x > x && phys.x < x + w && phys.y > y && phys.y < y + h)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 
@@ -159,31 +194,6 @@ void Car::backward()
 
 void Car::drawCar()
 {
-	/*double lineWidth = 2;
-    fl_push_matrix();
-	// Translate to center of car and rotate
-    fl_translate(phys.x, phys.y);
-    fl_rotate(phys.angle);
-	// Black border for car
-	fl_color(FL_BLACK);
-	fl_begin_polygon();
-	fl_vertex((-phys.carWidth / 2.0), (-phys.carWidth / 2.0));
-    fl_vertex(( phys.carWidth / 2.0), (-phys.carWidth / 2.0));
-    fl_vertex(( phys.carWidth / 2.0), ( phys.carWidth / 2.0));
-    fl_vertex((-phys.carWidth / 2.0), ( phys.carWidth / 2.0));
-	fl_end_polygon();
-	// Blue fill for car
-    fl_color(col);
-    fl_begin_polygon();
-	fl_vertex((-(phys.carWidth - lineWidth) / 2.0), (-(phys.carWidth - lineWidth) / 2.0));
-    fl_vertex(( (phys.carWidth - lineWidth) / 2.0), (-(phys.carWidth - lineWidth) / 2.0));
-    fl_vertex(( (phys.carWidth - lineWidth) / 2.0), ( (phys.carWidth - lineWidth) / 2.0));
-    fl_vertex((-(phys.carWidth - lineWidth) / 2.0), ( (phys.carWidth - lineWidth) / 2.0));
-	fl_end_polygon();
-    fl_pop_matrix();*/
-
-
-
     fl_push_matrix();					// Begin matrix
 	fl_translate(phys.x, phys.y);		// Translate to car position
 	fl_rotate(phys.angle);				// Rotate to cars current angle
@@ -271,26 +281,38 @@ void Car::drawCar()
 }
 
 
+void Car::drawBrain()
+{
+	fl_color(FL_BLACK);
+	fl_circle(phys.x, phys.y, 10);
+	Eigen::VectorXd out = brain.getOutput();
+
+	fl_draw("hei", 20, 20);
+}
+
+
 void Car::drawRays()
 {
-	for (int i = 0; i < rays.size(); i++)
-	{
-		rays[i].first = phys.x - rayLength * cos((90 - phys.angle + i * 45) * DEGTORAD);
-		rays[i].second = phys.y - rayLength * sin((90 - phys.angle + i * 45) * DEGTORAD);
-	}
-
-	/*fl_color(50, 50, 50);	// Grey
+	fl_color(50, 50, 50);	// Grey
 	for (int i = 0; i < rays.size(); i++)
 	{
 		fl_line(phys.x, phys.y, rays[i].first, rays[i].second);
-	}*/
+	}
 }
 
 
 void Car::calculateRays()
 {
+	/*for (int i = 0; i < rays.size(); i++)
+	{
+		rays[i].first = phys.x - rayLength * cos((90 - phys.angle + i * 45) * DEGTORAD);
+		rays[i].second = phys.y - rayLength * sin((90 - phys.angle + i * 45) * DEGTORAD);
+	}*/
 	for (int i = 0; i < rays.size(); i++)
 	{
+		rays[i].first = phys.x - rayLength * cos((90 - phys.angle + i * 45) * DEGTORAD);
+		rays[i].second = phys.y - rayLength * sin((90 - phys.angle + i * 45) * DEGTORAD);
+
 		// Ray start and end
 		std::pair<int, int> p1 = { phys.x, phys.y };				// Ray, start
 		std::pair<int, int> q1 = { rays[i].first, rays[i].second };	// Ray, end
@@ -308,7 +330,7 @@ void Car::calculateRays()
 			// Intersect?
 			intersectLeft = doIntersect(p1, q1, p2L, q2L);
 			intersectRight = doIntersect(p1, q1, p2R, q2R);
-			if (intersectLeft && i == 2)
+			/*if (intersectLeft && i == 2)
 			{
 				fl_color(FL_GREEN);
 				fl_rect(10, 10, 10, 10);
@@ -317,14 +339,17 @@ void Car::calculateRays()
 			{
 				fl_color(FL_RED);
 				fl_rect(25, 10, 10, 10);
-			}
+			}*/
 			
 			if (intersectLeft)
 			{
 				//track->leftWalls[i]->setColor(FL_GREEN);
 				std::pair<int, int> collPoint = lineLineIntersection(p1, q1, p2L, q2L);
-				/*fl_color(FL_RED);
-				fl_circle(collPoint.first, collPoint.second, 5);*/
+				if (leading)
+				{
+					fl_color(FL_RED);
+					fl_circle(collPoint.first, collPoint.second, 5);
+				}
 
 				double distSquared = pow(phys.x - collPoint.first, 2) + pow(phys.y - collPoint.second, 2);
 				rayDistances[i] = distSquared;
@@ -335,8 +360,11 @@ void Car::calculateRays()
 			{
 				//track->rightWalls[i]->setColor(FL_GREEN);
 				std::pair<int, int> collPoint = lineLineIntersection(p1, q1, p2R, q2R);
-				/*fl_color(FL_RED);
-				fl_circle(collPoint.first, collPoint.second, 5);*/
+				if (leading)
+				{
+					fl_color(FL_RED);
+					fl_circle(collPoint.first, collPoint.second, 5);
+				}
 
 				double distSquared = pow(phys.x - collPoint.first, 2) + pow(phys.y - collPoint.second, 2);
 				rayDistances[i] = distSquared;

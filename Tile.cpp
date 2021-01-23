@@ -14,7 +14,6 @@ Tile::Tile(int x0, int y0, int x1, int y1) : Fl_Widget{0, 0, winW, winH},
     {
         angle = -atan2(static_cast<double>(y1 - y0), static_cast<double>(x1 - x0));
     }
-    std::cout << "Ang: " << angle << std::endl;
 
     corners.push_back( { x0 - thickness * cos(PI / 2 - angle), y0 - thickness * sin(PI / 2 - angle) } );
     corners.push_back( { x0 + thickness * cos(PI / 2 - angle), y0 + thickness * sin(PI / 2 - angle) } );

@@ -2,10 +2,10 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl.H>
 #include <FL/Fl_Gl_Window.H>
-#include <iostream>
 #include <chrono>
 #include <thread>
 #include <vector>
+#include <string>
 #include "Car.h"
 #include "Track.h"
 #include "utilities.h"
@@ -25,6 +25,7 @@ private:
     
     void checkCars();
     void restart();
+    std::string pickTrack();
 
     std::chrono::steady_clock::time_point startTime;
     

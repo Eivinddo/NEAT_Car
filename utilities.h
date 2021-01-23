@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utility>
+#include <vector>
 
 constexpr int winW = 1280;			// Window Width
 constexpr int winH = 720;			// Window Height
@@ -30,6 +31,8 @@ double map(double value, double istart, double istop, double ostart, double osto
 double min(double val1, double val2);
 
 double max(double val1, double val2);
+
+void findMax(std::vector<double> vec, double& max, int& maxIndex);
 
 double sigmoid(double x);
 
