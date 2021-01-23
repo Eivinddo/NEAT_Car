@@ -11,9 +11,11 @@ See videos for a simple showcase of the game and how it performs.
 
 ## Old version:
 This version does not use a fitness score to determine the best cars, and only has one track.
+
 [![Video](https://img.youtube.com/vi/fFn9S7x9gFM/0.jpg)](https://www.youtube.com/watch?v=fFn9S7x9gFM)
 
 ## New version:
 This version is with the fitness score system, and the tracks are picked at random every time the cars restarts.
 To make the tracks, a separate program is used to just draw the lines. The output .txt-file is then loaded into this program and is added to the list of random tracks that are picked.
+
 [![Video](https://img.youtube.com/vi/E0kOrQoAwm0/0.jpg)](https://youtu.be/E0kOrQoAwm0)
